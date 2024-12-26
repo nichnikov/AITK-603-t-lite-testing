@@ -1,14 +1,17 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
-torch.manual_seed(42)
+
+# torch.manual_seed(42)
 
 model_name = "t-tech/T-pro-it-1.0"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(
     model_name, 
-    torch_dtype="auto",
-    device_map="auto",
+    torch_dtype="auto",  # auto
+    device_map="auto"
 )
+
+# model.to("cuda")
 
 prompt = "Напиши стих про машинное обучение"
 messages = [
@@ -20,7 +23,8 @@ text = tokenizer.apply_chat_template(
     tokenize=False,
     add_generation_prompt=True
 )
-model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+# model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+model_inputs = tokenizer([text], return_tensors="pt").to("cuda")
 
 generated_ids = model.generate(
     **model_inputs,
